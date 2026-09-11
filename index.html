@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script>/* gate-bootstrap: segura um submit de login feito antes do gate remoto carregar, para o primeiro clique nunca se perder */
+(function(){function h(e){var f=e.target;if(f&&f.id==='gate-form'&&!window.MembershipGate){e.preventDefault();e.stopImmediatePropagation();window.__gateEarlySubmit=true;}}window.addEventListener('submit',h,true);window.__gateBootstrapDisarm=function(){window.removeEventListener('submit',h,true);};})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Desenhe o time de agentes de IA num quadro — trabalhador, supervisor e entrega — e leve o grafo pronto para a IA construir. Ferramenta da Comunidade Maestros da IA.">
+<link rel="preconnect" href="https://gate.maestrosdaia.com">
+<link rel="preload" href="https://gate.maestrosdaia.com/v1/membership-gate.js" as="script">
+<title>Graph Builder — Maestros da IA</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23e7e0d2'/%3E%3Ccircle cx='13' cy='15' r='5' fill='%23a67c1f'/%3E%3Ccircle cx='35' cy='13' r='5' fill='%2327496b'/%3E%3Ccircle cx='33' cy='36' r='5' fill='%232f6b4a'/%3E%3Cpath d='M13 15 C 23 11, 28 9, 35 13 C 39 23, 37 30, 33 36' stroke='%236b5a45' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ══════════ PORTA: só entra quem é membro ══════════ -->
+<div id="gate-screen" class="screen active">
+  <div class="gate-wrap">
+    <div class="gate-card">
+      <div class="gate-brand">
+        <svg viewBox="0 0 48 48" class="glyph" aria-hidden="true">
+          <circle cx="12" cy="14" r="5" fill="#a67c1f"/>
+          <circle cx="36" cy="12" r="5" fill="#27496b"/>
+          <circle cx="34" cy="36" r="5" fill="#2f6b4a"/>
+          <path d="M12 14 C 22 10, 28 8, 36 12" stroke="#6b5a45" stroke-width="1.6" fill="none"/>
+          <path d="M36 12 C 40 22, 38 30, 34 36" stroke="#6b5a45" stroke-width="1.6" fill="none"/>
+          <path d="M12 14 C 16 26, 24 34, 34 36" stroke="#6b5a45" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+        </svg>
+        <b>Graph Builder</b>
+      </div>
+
+      <p class="eyebrow">Comunidade Maestros da IA</p>
+      <h1 class="gate-h1">Desenhe o time. A IA constrói.</h1>
+      <p class="gate-lede">Monte num quadro quem faz, quem confere e quem entrega — e saia
+        com o grafo pronto para colar no Claude Code, no ChatGPT ou no n8n.</p>
+      <p class="gate-badge">Exclusivo para membros da Comunidade Maestros da IA</p>
+
+      <form id="gate-form" class="gate-form">
+        <label class="field">
+          <span>Seu e-mail cadastrado</span>
+          <input type="email" id="gate-email" placeholder="seu@email.com" autocomplete="email">
+        </label>
+        <label class="field">
+          <span>Seu WhatsApp (com DDD)</span>
+          <input type="tel" id="gate-phone" placeholder="11999999999" autocomplete="tel">
+        </label>
+        <button type="submit" id="gate-submit" class="btn primary gate-btn">
+          <span class="btn-text">Verificar acesso</span>
+          <span class="btn-loading" style="display:none;">Verificando…</span>
+        </button>
+        <p id="gate-error" class="gate-error" style="display:none;"></p>
+      </form>
+
+      <p class="gate-foot">Ainda não é membro?
+        <a href="https://comunidade.maestrosdaia.com" target="_blank" rel="noopener noreferrer">Conheça a Comunidade Maestros da IA</a>
+      </p>
+    </div>
+
+    <p class="gate-legal">
+      <a href="about.html">Sobre a ferramenta</a> ·
+      <a href="privacy-policy.html">Privacidade</a> ·
+      <a href="data-deletion.html">Excluir meus dados</a>
+    </p>
+  </div>
+</div>
+
+<!-- ══════════ PONTE: este app não usa chave de IA (ver gate-bridge.js) ══════════ -->
+<div id="key-screen" class="screen">
+  <div class="gate-wrap"><p class="gate-lede">Entrando no quadro…</p></div>
+</div>
+
+<!-- ══════════ O APP ══════════ -->
+<div id="app-screen" class="screen">
+
+<!-- ══════════ CHROME SUPERIOR ══════════ -->
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 48 48" class="glyph" aria-hidden="true">
+      <circle cx="12" cy="14" r="5" fill="#a67c1f"/>
+      <circle cx="36" cy="12" r="5" fill="#27496b"/>
+      <circle cx="34" cy="36" r="5" fill="#2f6b4a"/>
+      <path d="M12 14 C 22 10, 28 8, 36 12" stroke="#6b5a45" stroke-width="1.6" fill="none"/>
+      <path d="M36 12 C 40 22, 38 30, 34 36" stroke="#6b5a45" stroke-width="1.6" fill="none"/>
+      <path d="M12 14 C 16 26, 24 34, 34 36" stroke="#6b5a45" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+    </svg>
+    <b>Graph Builder</b>
+    <span class="brand-sub">grafos de agentes · bancada de <span id="user-name">Maestro</span></span>
+  </div>
+
+  <div class="topbar-mid" id="graph-title-wrap">
+    <input id="graph-title" class="graph-title" value="Meu grafo" spellcheck="false" aria-label="Nome do grafo">
+  </div>
+
+  <div class="topbar-actions">
+    <a class="btn ghost" href="about.html" title="Sobre a ferramenta" aria-label="Sobre a ferramenta">?</a>
+    <button class="btn ghost" id="btn-lib" type="button">Meus grafos</button>
+    <button class="btn ghost" id="btn-import" type="button"><span class="lbl-full">Abrir </span>JSON</button>
+    <button class="btn ghost" id="btn-clear" type="button">Limpar</button>
+    <button class="btn primary" id="btn-export" type="button">Exportar<span class="lbl-full"> para a IA</span></button>
+    <button class="btn ghost" id="logout-btn" type="button" title="Sair da conta">Sair</button>
+    <input type="file" id="file-input" accept="application/json,.json" hidden>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- ══════════ PALETA ══════════ -->
+  <aside class="palette" id="palette">
+    <p class="eyebrow">Peças</p>
+
+    <button class="pal-card" data-add="entrada" type="button">
+      <span class="pal-band" style="background:var(--c-entrada)"></span>
+      <b>Entrada</b>
+      <span>Opcional: o insumo que o usuário cola na hora de rodar. Uma por grafo.</span>
+    </button>
+
+    <button class="pal-card" data-add="trabalhador" type="button">
+      <span class="pal-band" style="background:var(--c-trabalhador)"></span>
+      <b>Trabalhador</b>
+      <span>Executa uma peça do trabalho. É quem constrói.</span>
+    </button>
+
+    <button class="pal-card" data-add="supervisor" type="button">
+      <span class="pal-band" style="background:var(--c-supervisor)"></span>
+      <b>Supervisor</b>
+      <span>Crítico cego: julga o que chegou e devolve para refazer.</span>
+    </button>
+
+    <button class="pal-card" data-add="entrega" type="button">
+      <span class="pal-band" style="background:var(--c-entrega)"></span>
+      <b>Entrega</b>
+      <span>Junta vários laços num artefato só — e pode alimentar a fase seguinte.</span>
+    </button>
+
+    <div class="pal-foot">
+      <p class="eyebrow">Como ligar</p>
+      <ul class="tips">
+        <li>Arraste do <b>ponto direito</b> de uma peça até o <b>ponto esquerdo</b> de outra.</li>
+        <li>Clique numa peça para escrever as <b>instruções</b> dela.</li>
+        <li>Clique num fio para cortá-lo. <kbd>Del</kbd> apaga a peça selecionada.</li>
+        <li><kbd>Ctrl</kbd>+<kbd>D</kbd> duplica a peça selecionada, com instruções e barra.</li>
+        <li>Arraste o fundo para andar · <kbd>scroll</kbd> para zoom · <kbd>Ctrl</kbd>+<kbd>Z</kbd> desfaz.</li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- ══════════ CANVAS INFINITO ══════════ -->
+  <main class="canvas" id="canvas">
+    <div class="world" id="world">
+      <svg class="wires" id="wires" aria-hidden="true"></svg>
+      <div class="nodes" id="nodes"></div>
+    </div>
+
+    <div class="zoombar">
+      <button class="zbtn" id="zoom-out" type="button" aria-label="Diminuir zoom">−</button>
+      <button class="zbtn wide" id="zoom-reset" type="button">100%</button>
+      <button class="zbtn" id="zoom-in" type="button" aria-label="Aumentar zoom">+</button>
+      <button class="zbtn wide" id="zoom-fit" type="button">Enquadrar</button>
+      <button class="zbtn wide" id="btn-arrumar" type="button">Arrumar</button>
+      <button class="zbtn wide" id="btn-foco" type="button">Foco</button>
+    </div>
+
+    <div class="empty-hint" id="empty-hint">
+      <p>O quadro está vazio.</p>
+      <p class="dim">Escreva o <b>objetivo</b> na coluna da direita, depois pendure trabalhadores, supervisores e uma entrega.</p>
+      <button class="btn primary" id="btn-example" type="button">Montar um exemplo</button>
+    </div>
+
+    <div class="lint" id="lint" hidden></div>
+  </main>
+
+  <!-- ══════════ INSPETOR ══════════ -->
+  <aside class="inspector" id="inspector">
+    <div class="insp-mural" id="insp-empty">
+      <p class="eyebrow">O grafo</p>
+
+      <label class="field">
+        <span>Objetivo deste grafo</span>
+        <textarea id="f-goal" rows="7" placeholder="O que este time inteiro precisa entregar, no fim. Ex.: uma página de vendas pronta para publicar, que aguente comparação com a página da concorrência."></textarea>
+      </label>
+      <p class="field-hint">O objetivo orienta <b>todas</b> as peças ao mesmo tempo — ele abre o texto exportado e entra no prompt de sistema de cada agente. É a única coisa que a IA lê antes de qualquer instrução.</p>
+
+      <div class="insp-meta" id="mural-meta"></div>
+
+      <p class="field-hint" style="margin-top:14px">Clique numa peça do quadro para escrever as instruções dela.</p>
+    </div>
+
+    <div class="insp-body" id="insp-body" hidden>
+      <div class="insp-head">
+        <span class="insp-type" id="insp-type">Trabalhador</span>
+        <button class="btn ghost sm" id="btn-del" type="button">Apagar</button>
+      </div>
+
+      <label class="field">
+        <span>Nome da peça</span>
+        <input id="f-name" spellcheck="false" placeholder="Ex.: Redator da página">
+      </label>
+
+      <label class="field">
+        <span id="f-instr-label">Instruções</span>
+        <textarea id="f-instr" rows="12" placeholder="Escreva do seu jeito o que esta peça precisa fazer."></textarea>
+      </label>
+      <p class="field-hint" id="f-instr-hint"></p>
+
+      <div class="barras" id="row-barras" hidden>
+        <p class="eyebrow">Preencher rápido — a barra</p>
+        <p class="field-hint barras-hint">Cada botão escreve um critério que um <b>estranho</b> consegue julgar sozinho, só com o artefato na mão. Clique de novo para tirar.</p>
+        <div class="barra-chips" id="barra-chips"></div>
+
+        <label class="field field-ref" id="row-ref" hidden>
+          <span>Referência a igualar ou superar</span>
+          <input id="f-ref" spellcheck="false" placeholder="Ex.: a página de vendas do Notion; o relatório trimestral da Stripe">
+        </label>
+        <p class="field-hint field-ref-hint" id="row-ref-hint" hidden>Um exemplar <b>real e alcançável</b>, que o crítico consiga abrir e colocar na mesma situação. "As melhores do mercado" não serve — ninguém consegue julgar contra isso.</p>
+      </div>
+
+      <div class="field-row" id="row-rodadas" hidden>
+        <label class="field small">
+          <span>Máximo de rodadas</span>
+          <input id="f-rodadas" type="number" min="1" max="10" value="3">
+        </label>
+        <p class="field-hint">Se o supervisor reprovar, o trabalhador refaz. Depois deste teto, entrega o melhor que tiver com as ressalvas anotadas.</p>
+      </div>
+
+      <label class="field" id="row-formato" hidden>
+        <span>Formato da entrega</span>
+        <input id="f-formato" spellcheck="false" placeholder="Ex.: um documento Markdown com uma seção por trabalhador">
+      </label>
+
+      <div class="insp-meta" id="insp-meta"></div>
+    </div>
+  </aside>
+</div>
+
+</div><!-- /#app-screen -->
+
+<!-- ══════════ MODAL DE EXPORTAÇÃO ══════════ -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="Exportar grafo">
+    <div class="modal-top">
+      <div>
+        <p class="eyebrow">Exportar</p>
+        <h2 id="modal-title">Leve o grafo pronto para a IA</h2>
+      </div>
+      <button class="btn ghost sm" id="btn-close" type="button">Fechar</button>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-tab="brief" type="button">Texto para a IA</button>
+      <button class="tab" data-tab="json" type="button">JSON do grafo</button>
+      <button class="tab" data-tab="lang" type="button">LangGraph (Python)</button>
+    </div>
+
+    <p class="tab-note" id="tab-note"></p>
+
+    <pre class="outbox" id="out"></pre>
+
+    <div class="modal-foot">
+      <span class="hint" id="out-meta"></span>
+      <div class="sp"></div>
+      <button class="btn ghost" id="btn-download" type="button">Baixar arquivo</button>
+      <button class="btn primary" id="btn-copy" type="button">Copiar tudo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ BIBLIOTECA DE GRAFOS ══════════ -->
+<div class="modal" id="modal-lib" hidden>
+  <div class="modal-box lib-box" role="dialog" aria-modal="true" aria-label="Meus grafos">
+    <div class="modal-top">
+      <div>
+        <p class="eyebrow">Biblioteca</p>
+        <h2>Meus grafos</h2>
+      </div>
+      <div class="lib-acoes">
+        <button class="btn primary" id="btn-novo" type="button">Novo grafo</button>
+        <button class="btn ghost sm" id="btn-lib-close" type="button">Fechar</button>
+      </div>
+    </div>
+
+    <p class="tab-note">Tudo fica guardado neste navegador. Para levar um grafo para outro
+      computador — ou para guardar de verdade — exporte o JSON.</p>
+
+    <div class="lib-lista" id="lib-lista"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="config.js"></script>
+<script src="kill-switch.js"></script>
+<script src="rate-limiter.js"></script>
+<script src="https://gate.maestrosdaia.com/v1/membership-gate.js"></script>
+<script src="gate-bridge.js"></script>
+<script src="feedback-widget.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sobre o Graph Builder — Maestros da IA</title>
+<meta name="description" content="O que é o Graph Builder, para quem é e como usar: desenhe o time de agentes num quadro e leve o grafo pronto para a IA construir.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23e7e0d2'/%3E%3Ccircle cx='13' cy='15' r='5' fill='%23a67c1f'/%3E%3Ccircle cx='35' cy='13' r='5' fill='%2327496b'/%3E%3Ccircle cx='33' cy='36' r='5' fill='%232f6b4a'/%3E%3Cpath d='M13 15 C 23 11, 28 9, 35 13 C 39 23, 37 30, 33 36' stroke='%236b5a45' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<style>
+  body { overflow: auto; }
+  .doc { max-width: 760px; margin: 0 auto; padding: 44px 22px 80px; }
+  .doc-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
+  .doc-brand .glyph { width: 30px; height: 30px; }
+  .doc-brand b { font-family: var(--font-title); font-size: 22px; }
+  .doc h1 { font-family: var(--font-title); font-size: 34px; line-height: 1.12; margin: 0 0 12px; font-weight: 600; }
+  .doc h2 { font-family: var(--font-title); font-size: 21px; margin: 38px 0 10px; font-weight: 600; }
+  .doc h3 { font-size: 14px; margin: 22px 0 4px; font-weight: 700; }
+  .doc p, .doc li { font-size: 14.5px; line-height: 1.65; color: var(--ink-2); }
+  .doc p.lede { font-size: 16px; color: var(--ink); }
+  .doc ol, .doc ul { padding-left: 20px; }
+  .doc li { margin-bottom: 8px; }
+  .doc a { color: var(--brass); text-underline-offset: 2px; }
+  .pecas { display: grid; gap: 10px; margin: 16px 0 0; }
+  .peca { position: relative; background: linear-gradient(var(--paper), var(--paper-2));
+    border: 1px solid var(--rule); border-radius: var(--r-md); padding: 13px 15px 14px 18px; box-shadow: var(--shadow-card); }
+  .peca::before { content: ''; position: absolute; left: -1px; top: -1px; bottom: -1px; width: 5px;
+    border-radius: var(--r-md) 0 0 var(--r-md); background: var(--cor); }
+  .peca b { display: block; font-size: 14px; }
+  .peca span { display: block; font-size: 13px; line-height: 1.55; color: var(--ink-2); margin-top: 3px; }
+  .nota { background: rgba(166,124,31,.08); border: 1px solid var(--brass-soft); border-radius: var(--r-md); padding: 14px 16px; margin: 22px 0; }
+  .nota p { margin: 0; font-size: 13.5px; }
+  .doc-foot { margin-top: 46px; padding-top: 20px; border-top: 1px solid var(--rule);
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); }
+  .voltar { display: inline-block; margin-top: 26px; }
+</style>
+</head>
+<body>
+<main class="doc">
+
+  <div class="doc-brand">
+    <svg viewBox="0 0 48 48" class="glyph" aria-hidden="true">
+      <circle cx="12" cy="14" r="5" fill="#a67c1f"/><circle cx="36" cy="12" r="5" fill="#27496b"/>
+      <circle cx="34" cy="36" r="5" fill="#2f6b4a"/>
+      <path d="M12 14 C 22 10, 28 8, 36 12" stroke="#6b5a45" stroke-width="1.6" fill="none"/>
+      <path d="M36 12 C 40 22, 38 30, 34 36" stroke="#6b5a45" stroke-width="1.6" fill="none"/>
+      <path d="M12 14 C 16 26, 24 34, 34 36" stroke="#6b5a45" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+    </svg>
+    <b>Graph Builder</b>
+  </div>
+
+  <p class="eyebrow">Comunidade Maestros da IA</p>
+  <h1>Desenhe o time. A IA constrói.</h1>
+  <p class="lede">O Graph Builder é um quadro onde você monta, arrastando peças, o time de
+    agentes de IA que vai fazer um trabalho — quem executa, quem confere e quem entrega. No
+    fim, você leva um texto pronto para colar no Claude Code, no ChatGPT, no Codex ou no n8n,
+    e a IA monta o time exatamente como você desenhou.</p>
+
+  <h2>Por que isso existe</h2>
+  <p>Pedir uma tarefa grande a uma IA num prompt só quase sempre devolve algo "correto e
+    competente" — e ninguém conferiu nada. A saída não é escrever um prompt maior: é montar
+    um <b>time</b>, em que quem constrói nunca é quem aprova. O difícil é descrever esse time
+    para a IA sem ambiguidade. É isso que o quadro resolve: você desenha, e o texto sai
+    ordenado, numerado e explícito.</p>
+
+  <h2>As quatro peças</h2>
+  <div class="pecas">
+    <div class="peca" style="--cor:#a67c1f"><b>Entrada</b>
+      <span>Opcional. O insumo que você cola na hora de rodar — um texto, três URLs, uma
+        planilha. Sem ela, o grafo parte direto do objetivo.</span></div>
+    <div class="peca" style="--cor:#27496b"><b>Trabalhador</b>
+      <span>Executa. É quem constrói o artefato. Cada trabalhador tem suas instruções, escritas
+        do seu jeito.</span></div>
+    <div class="peca" style="--cor:#8c2f28"><b>Supervisor</b>
+      <span>Crítico cego: recebe só o artefato, nunca o raciocínio de quem construiu, e julga
+        contra uma barra escrita. Se reprovar, devolve para refazer — até o teto de rodadas que
+        você definir.</span></div>
+    <div class="peca" style="--cor:#2f6b4a"><b>Entrega</b>
+      <span>Junta o resultado de vários laços num artefato só. Pode ser o fim do grafo ou
+        alimentar a fase seguinte.</span></div>
+  </div>
+
+  <h2>Como usar, passo a passo</h2>
+  <ol>
+    <li><b>Escreva o objetivo</b>, no painel da direita. Ele vale para todas as peças e abre o
+      texto exportado — é a primeira coisa que a IA lê.</li>
+    <li><b>Pendure as peças</b> clicando na coluna da esquerda. Cada peça nova nasce encadeada
+      à direita da que estiver selecionada; <b>Ctrl+D</b> duplica uma peça inteira.</li>
+    <li><b>Ligue os fios</b> arrastando do ponto direito de uma peça até a outra. Clique num fio
+      para cortá-lo.</li>
+    <li><b>Escreva as instruções</b> de cada peça clicando nela. No supervisor, os botões de
+      <b>barra</b> preenchem critérios que um estranho consegue julgar sozinho — resultado WOW,
+      sem erros, tão bom quanto uma referência que você nomeia, passa nos testes.</li>
+    <li><b>Arrumar</b> organiza o quadro sozinho; <b>Foco</b> esconde os painéis quando o grafo
+      fica grande.</li>
+    <li><b>Exportar para a IA</b> e copiar. Cole no seu assistente e peça para montar o time.</li>
+  </ol>
+
+  <h2>O que sai na exportação</h2>
+  <h3>Texto para a IA</h3>
+  <p>O formato principal: o objetivo, um diagrama do fluxo, a ordem de execução e as instruções
+    literais de cada peça, mais as regras que sustentam o laço. É o que qualquer IA entende
+    melhor. Acima de ~8 mil caracteres, prefira <b>Baixar arquivo</b> e pedir para a IA ler o
+    arquivo — terminal e chat truncam colagem grande sem avisar.</p>
+  <h3>JSON do grafo</h3>
+  <p>O grafo canônico, para reabrir aqui depois, guardar no seu computador ou usar no seu
+    próprio código.</p>
+  <h3>LangGraph (Python)</h3>
+  <p>Um esqueleto executável: um nó por peça, o supervisor virando decisão de aprovar ou
+    devolver, com o teto de rodadas. Roda com a sua própria chave.</p>
+
+  <div class="nota">
+    <p><b>Esta ferramenta não chama nenhuma IA.</b> Ela não pede chave de API porque não faz
+      inferência nenhuma: tudo acontece no seu navegador, e o que sai daqui é o texto que a IA
+      <i>do seu ambiente</i> vai executar. Seus grafos ficam salvos só neste navegador — para
+      levar um grafo para outro computador, exporte o JSON.</p>
+  </div>
+
+  <h2>Para quem é</h2>
+  <p>Para o membro que já usa IA para trabalhar e cansou de receber entrega sem conferência:
+    quem escreve, quem programa, quem produz material em série, quem monta automação. Não
+    precisa saber programar — o quadro é arrastar peça e escrever em português.</p>
+
+  <p class="voltar"><a href="/">← Voltar para o quadro</a></p>
+
+  <div class="doc-foot">
+    Graph Builder · Comunidade Maestros da IA ·
+    <a href="https://graphbuilder.maestrosdaia.com">graphbuilder.maestrosdaia.com</a><br>
+    <a href="privacy-policy.html">Política de privacidade</a> ·
+    <a href="data-deletion.html">Excluir meus dados</a> ·
+    <a href="https://comunidade.maestrosdaia.com">Conheça a Comunidade</a>
+  </div>
+</main>
+</body>
+</html>
