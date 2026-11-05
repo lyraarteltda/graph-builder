@@ -28,6 +28,8 @@
   --c-trabalhador:  #27496b;
   --c-supervisor:   #8c2f28;
   --c-entrega:      #2f6b4a;
+  --c-decisao:      #6b3f7a;
+  --c-memoria:      #4b5563;
 
   --shadow-card: 0 1px 0 rgba(255,255,255,.7) inset, 0 6px 14px rgba(60,48,30,.16), 0 1px 2px rgba(60,48,30,.2);
   --shadow-pop:  0 18px 44px rgba(50,40,24,.30);
@@ -454,3 +456,21 @@ body:has(#gate-screen.active), body:has(#key-screen.active) { overflow: auto; }
 }
 .gate-badge { font-size: 9.5px; letter-spacing: .08em; padding: 5px 10px; line-height: 1.4; }
 .topbar-actions a.btn { text-decoration: none; display: inline-flex; align-items: center; }
+
+/* ═══ Estrutura: Decisão e Memória ═══ */
+.pal-sep { margin-top: 14px; }
+.node[data-type="memoria"] {
+  background: repeating-linear-gradient(0deg, var(--paper) 0 17px, #ece6d8 17px 18px);
+  border-style: dashed;
+}
+.node[data-type="decisao"] .n-name::before { content: '◇ '; color: var(--c-decisao); }
+.wires g.wire.mem .cord { stroke-dasharray: 2 5; stroke: var(--c-memoria); }
+.wires g.wire.mem .knot { fill: var(--c-memoria); }
+.wires .tag { fill: var(--paper); stroke: var(--rule); stroke-width: 1; }
+.wires .tag.vazia { stroke: var(--c-supervisor); stroke-dasharray: 3 2; }
+.wires .tag-txt { font-family: var(--font-mono); font-size: 10px; fill: var(--ink-2); text-anchor: middle; }
+.wires g.wire.mem .tag-txt { fill: var(--c-memoria); }
+.caminhos-wrap, .mem-wrap { margin-top: 4px; }
+.field.caminho span { text-transform: none; letter-spacing: 0; font-family: var(--font-ui); font-size: 12px; }
+.empty-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.mem-wrap .barra-chips { margin-bottom: 16px; }

@@ -40,6 +40,39 @@ A **Entrada** é outra coisa: o insumo que o usuário fornece *na hora de rodar*
 | **Supervisor** | Crítico cego: recebe SÓ o artefato, julga contra a barra, aprova ou reprova. | nome, instruções (a barra) + **botões de barra**, máximo de rodadas |
 | **Entrega** | Junta o resultado de vários laços num artefato único. | nome, instruções, formato de saída |
 
+### Estrutura (v2, 05/11/2026): Decisão e Memória
+
+O fluxo (trabalhador → supervisor → entrega) diz **quem roda depois de quem**. Duas peças
+novas guardam o que o fluxo sozinho não guarda: **como se decide** e **o que se sabe**.
+
+| Peça | Papel | Campos |
+|------|-------|--------|
+| **Decisão** | Grafo de procedimento. Não produz nada: lê o que chegou, responde à pergunta dela e segue por **um** caminho só. Cada fio que sai dela leva uma **condição escrita** (aparece como etiqueta no fio). | nome, a pergunta que decide, uma condição por fio de saída |
+| **Memória** | Grafo de contexto. Não é passo: é o quadro na parede. Guarda **itens** (o conteúdo mora neles) ligados por **relações com nome** (só apontam). Fio peça→Memória = escreve; fio Memória→peça = consulta. | para que serve, tipos de item, tipos de ligação, regras de integridade + 3 esquemas prontos (Pesquisa com fontes, Clientes e decisões, Políticas e exceções) |
+
+Regras que entram em toda exportação:
+- **Item × ligação:** o conteúdo mora no item; a ligação só aponta e diz o tipo.
+- **Duas passadas:** itens se escrevem na hora em que se descobre; ligações, quando se
+  compara (quem lê a memória inteira de uma vez).
+- **Ids estáveis:** número novo entra como item novo ligado ao velho por "substitui".
+- **Integridade antes da Entrega:** regra quebrada → a Entrega diz o que ficou em aberto.
+- **Rastro:** cada peça que roda grava uma linha (o que fez, qual condição bateu e por quê).
+
+Ordem: a Memória não roda, mas quem escreve roda antes de quem consulta — exceto quando o
+fluxo já põe o leitor antes (o ligador que lê e reescreve) ou quando escritor e leitor estão
+em caminhos diferentes da mesma Decisão (só um deles vai rodar).
+
+No LangGraph: Decisão = `add_conditional_edges` com um ramo por condição; Memória = campo
+`memoria` do estado com reducer que junta itens sem sobrescrever; checagem estrutural
+`_confere_memoria` antes da Entrega; `rastro` impresso no fim e `memoria.json` gravado.
+O codegen também passou a usar reducers em `artefatos/rodadas/rotas` (peças em paralelo
+quebravam com `InvalidUpdateError`), junção `add_edge([a, b], c)` quando a peça espera
+vários pais, e não dispara por fio redundante (a Entrega do exemplo 1 rodava antes do
+crítico aprovar). Testado rodando os dois exemplos com um modelo falso roteirizado.
+
+Exemplo novo no quadro vazio: **"Exemplo com memória e decisão"** — pesquisa de preço com
+dois pesquisadores em paralelo, ligador, decisão por classe de projeto, auditor e entrega.
+
 **O laço de reprova é implícito.** O supervisor tem uma saída só (aprovado → segue). Quando
 ele reprova, o trabalho volta para o nó que o alimentou — o Mural deriva isso da própria
 ligação, então o usuário não precisa desenhar o fio de volta (e o validador avisa se ele

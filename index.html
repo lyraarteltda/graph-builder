@@ -133,12 +133,27 @@
       <span>Junta vários laços num artefato só — e pode alimentar a fase seguinte.</span>
     </button>
 
+    <p class="eyebrow pal-sep">Estrutura</p>
+
+    <button class="pal-card" data-add="decisao" type="button">
+      <span class="pal-band" style="background:var(--c-decisao)"></span>
+      <b>Decisão</b>
+      <span>Escolhe UM caminho. Cada fio que sai dela leva uma condição escrita.</span>
+    </button>
+
+    <button class="pal-card" data-add="memoria" type="button">
+      <span class="pal-band" style="background:var(--c-memoria)"></span>
+      <b>Memória</b>
+      <span>O quadro na parede: itens ligados por relações com nome. As peças escrevem e consultam.</span>
+    </button>
+
     <div class="pal-foot">
       <p class="eyebrow">Como ligar</p>
       <ul class="tips">
         <li>Arraste do <b>ponto direito</b> de uma peça até o <b>ponto esquerdo</b> de outra.</li>
         <li>Clique numa peça para escrever as <b>instruções</b> dela.</li>
         <li>Clique num fio para cortá-lo. <kbd>Del</kbd> apaga a peça selecionada.</li>
+        <li>Fio de uma peça <b>para</b> a Memória = ela escreve. Fio <b>da</b> Memória para uma peça = ela consulta.</li>
         <li><kbd>Ctrl</kbd>+<kbd>D</kbd> duplica a peça selecionada, com instruções e barra.</li>
         <li>Arraste o fundo para andar · <kbd>scroll</kbd> para zoom · <kbd>Ctrl</kbd>+<kbd>Z</kbd> desfaz.</li>
       </ul>
@@ -164,7 +179,10 @@
     <div class="empty-hint" id="empty-hint">
       <p>O quadro está vazio.</p>
       <p class="dim">Escreva o <b>objetivo</b> na coluna da direita, depois pendure trabalhadores, supervisores e uma entrega.</p>
-      <button class="btn primary" id="btn-example" type="button">Montar um exemplo</button>
+      <div class="empty-btns">
+        <button class="btn primary" id="btn-example" type="button">Montar um exemplo</button>
+        <button class="btn ghost" id="btn-example-2" type="button">Exemplo com memória e decisão</button>
+      </div>
     </div>
 
     <div class="lint" id="lint" hidden></div>
@@ -221,6 +239,35 @@
           <input id="f-rodadas" type="number" min="1" max="10" value="3">
         </label>
         <p class="field-hint">Se o supervisor reprovar, o trabalhador refaz. Depois deste teto, entrega o melhor que tiver com as ressalvas anotadas.</p>
+      </div>
+
+      <div class="caminhos-wrap" id="row-caminhos" hidden>
+        <p class="eyebrow">Caminhos — a condição de cada fio</p>
+        <p class="field-hint barras-hint">Escreva quando seguir por cada fio. A IA segue <b>um só</b>: o primeiro cuja condição bater. Deixe o último como "em qualquer outro caso" para nunca travar.</p>
+        <div id="caminhos"></div>
+      </div>
+
+      <div class="mem-wrap" id="row-memoria" hidden>
+        <p class="eyebrow">Preencher rápido — esquema pronto</p>
+        <div class="barra-chips" id="mem-presets"></div>
+
+        <label class="field">
+          <span>Tipos de item — o conteúdo mora aqui</span>
+          <textarea id="f-kinds" rows="4" spellcheck="false" placeholder="Um por linha: nome — campos&#10;afirmação — texto, número, unidade&#10;fonte — url, autor, data"></textarea>
+        </label>
+        <p class="field-hint">Cada coisa a que alguém vai querer se referir depois vira um item, com seus campos.</p>
+
+        <label class="field">
+          <span>Tipos de ligação — só apontam</span>
+          <textarea id="f-rels" rows="4" spellcheck="false" placeholder="Um por linha: nome — de → para&#10;sustenta — fonte → afirmação&#10;contradiz — afirmação → afirmação"></textarea>
+        </label>
+        <p class="field-hint">Escreva primeiro as perguntas que você vai querer fazer ("o que cai se esta fonte cair?") — cada pergunta pede um tipo de ligação.</p>
+
+        <label class="field">
+          <span>Regras de integridade</span>
+          <textarea id="f-rules" rows="3" spellcheck="false" placeholder="Uma por linha&#10;toda afirmação tem pelo menos uma fonte"></textarea>
+        </label>
+        <p class="field-hint">Conferidas antes de qualquer Entrega. Se uma falhar, a Entrega diz o que ficou em aberto.</p>
       </div>
 
       <label class="field" id="row-formato" hidden>
